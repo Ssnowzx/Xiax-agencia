@@ -1,20 +1,35 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+# Contexto do projeto — mostrado à IA ao criar specs, propostas e tasks.
+context: |
+  Empresa: Xiax — software house de IA. Este repositório (Xiax-agencia) é a
+  camada de GESTÃO/DEPLOY: sobe o Paperclip, que orquestra times de agentes
+  de IA para tocar a operação. NÃO é um fork do Paperclip.
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  Arquitetura em camadas:
+    1. Xiax (dono) define metas e orçamento.
+    2. Paperclip (este deploy, na VPS) = o "gerente": org chart, tasks, custo.
+    3. Agentes-workers (Claude Code no plano Max) = escrevem o código.
+    4. Cada PRODUTO tem seu próprio repo + openspec/ = memória do produto.
+
+  Stack deste repo:
+    - Docker Compose (self-host); Paperclip como git submodule em vendor/paperclip.
+    - Postgres embutido no container; modo authenticated/private; loopback :3100.
+    - Reverse proxy via Apache/mod_proxy (VPS Virtualmin). NUNCA nginx.
+    - Claude Code usa o login do plano Max no host (~/.claude); sem ANTHROPIC_API_KEY.
+
+  Convenções:
+    - NÃO editar vendor/paperclip (é upstream); atualizar = bumpar o submodule.
+    - O que se edita aqui: docker-compose.yml, scripts/, .env.example, README, specs.
+    - Nunca commitar segredos (.env, credenciais).
+    - Conventional commits em pt-BR, imperativo (ex.: "feat: adiciona ...").
+
+# Regras por artefato
+rules:
+  proposal:
+    - Escrever em português (pt-BR), direto e curto.
+    - Sempre incluir uma seção "Não-objetivos".
+    - Deixar explícito o impacto em deploy/infra (portas, volumes, env, proxy).
+  tasks:
+    - Quebrar em passos pequenos e verificáveis.
+    - A última task é sempre validar (docker compose config / doctor).

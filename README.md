@@ -86,15 +86,28 @@ git submodule update --remote vendor/paperclip   # atualizar o Paperclip
 
 ## Workflow spec-driven (OpenSpec)
 
-Toda mudança de configuração/infra começa por um proposal e termina validada:
+> **OpenSpec é ferramenta de _desenvolvimento_, não roda no container do Paperclip.**
+> Ele vive na máquina onde você usa o Claude Code para evoluir este repo (seu Mac,
+> ou a própria VPS se você desenvolver lá). Já vem **pré-configurado** no repo:
+> `openspec/config.yaml` (com o contexto da Xiax) + comandos `/opsx:*` em `.claude/`.
 
+**Pré-requisito (uma vez, onde você desenvolve):**
+```bash
+npm install -g @fission-ai/openspec@latest   # precisa Node >= 20.19
+```
+Os slash commands `/opsx:*` já funcionam pelo `.claude/` mesmo sem o CLI global;
+o CLI é necessário para `openspec validate`, `archive`, `update`.
+
+**Fluxo — toda mudança de infra/config começa por um proposal e termina validada:**
 ```
 /opsx:propose "expor a agência em agencia.xiax.com com Apache"
 /opsx:apply
 /opsx:archive
 ```
 
-Config em [`openspec/config.yaml`](openspec/config.yaml) (schema: spec-driven).
+Config em [`openspec/config.yaml`](openspec/config.yaml) (schema: spec-driven) — já
+preenchido com stack, arquitetura e convenções da Xiax. **Regra-zero:** ver
+[`CLAUDE.md`](CLAUDE.md) — nenhuma mudança de infra sem passar pelo OpenSpec.
 
 ---
 
