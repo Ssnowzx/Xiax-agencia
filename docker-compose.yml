@@ -1,0 +1,33 @@
+# ==========================================================================
+# Xiax-agencia — deploy self-hosted do Paperclip
+# Build a partir do submodule vendor/paperclip (versão fixada = reproduzível).
+# Sobe: docker compose up -d --build
+# ==========================================================================
+services:
+  paperclip:
+    build:
+      context: ./vendor/paperclip
+      dockerfile: Dockerfile
+    image: xiax-agencia/paperclip:local
+    container_name: xiax-paperclip
+    restart: unless-stopped
+    ports:
+      # Só no loopback: quem expõe pra internet é o Apache/mod_proxy da VPS.
+      - "127.0.0.1:${PAPERCLIP_PORT:-3100}:3100"
+    environment:
+      HOST: "0.0.0.0"
+      PAPERCLIP_HOME: "/paperclip"
+      PAPERCLIP_DEPLOYMENT_MODE: "authenticated"
+      PAPERCLIP_DEPLOYMENT_EXPOSURE: "private"
+      PAPERCLIP_PUBLIC_URL: "${PAPERCLIP_PUBLIC_URL:-http://localhost:3100}"
+      BETTER_AUTH_SECRET: "${BETTER_AUTH_SECRET:?defina BETTER_AUTH_SECRET no .env}"
+      # Opcionais (adaptadores por API key). O Claude Code (Max) não usa isto.
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+    volumes:
+      # Estado persistente + Postgres embutido do Paperclip.
+      - "${PAPERCLIP_DATA_DIR:-./data/paperclip}:/paperclip"
+      # Login do Claude Code (plano Max) do host, em somente-leitura, para o
+      # adaptador claude-local autenticar sem API key. Ajuste se o container
+      # rodar como outro usuário.
+      - "${HOME}/.claude:/paperclip/.claude:ro"

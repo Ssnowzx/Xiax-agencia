@@ -1,0 +1,20 @@
+# Segredos — NUNCA commitar
+.env
+.env.*
+!.env.example
+
+# Estado/dados do Paperclip (montado como volume)
+data/
+*.sqlite
+*.sqlite3
+
+# Node
+node_modules/
+.pnpm-store/
+
+# Logs e temporários
+*.log
+.DS_Store
+
+# Credenciais do Claude Code (login Max fica no host/keychain, nunca no repo)
+.claude/.credentials.json
